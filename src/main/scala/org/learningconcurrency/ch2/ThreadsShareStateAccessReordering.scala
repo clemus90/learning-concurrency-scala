@@ -8,7 +8,7 @@ object ThreadsShareStateAccessReordering extends App {
     val logger = new PrintLogging();
     val log: String => Unit = logger.log
 
-    for (i <- 0 until 100000) {
+    for (i <- 0 until 500000) {
         var a = false
         var b = false
         var x = -1
