@@ -40,5 +40,7 @@ object SynchronizedPoolWithShutdown extends App {
     asynchronous { log("Hello") }
     asynchronous { log("World!") }
     Thread.sleep(500)
+     
+    Worker.shutdown()
 
 }
