@@ -12,7 +12,7 @@ object ConcurrentFileSystem {
     sealed trait State
     class Idle extends State
     class Creating extends State
-    class Copying(val n:Int) extends State
+    class Copying(var n:Int) extends State
     class Deleting extends State
 
     import scala.annotation.tailrec 
@@ -29,5 +29,25 @@ object ConcurrentFileSystem {
             case d: Deleting =>
                 false
         }
+    }
+
+    private def logMessage(s: String) = ???
+
+    private def acquire(entry: Entry, state: State) = ???
+
+    private def releaseCopy(e: Entry): Copying = e.state.get match {
+        case c: Copying => 
+            val nstate = if(c.n == 1) new Idle else new Copying(c.n-1)
+            if (e.state.compareAndSet(c, nstate)) c
+            else releaseCopy(e)
+    }
+
+    private def acquireCopy(e: Entry, c: Copying) = e.state.get match {
+        case i: Idle =>
+            c.n = 1
+            if (!e.state.compareAndSet(i, c)) acquire(e, c)
+        case oc: Copying =>
+            c.n = oc.n + 1
+            if(!e.state.compareAndSet(oc, c)) acquire(e, c)
     }
 }
