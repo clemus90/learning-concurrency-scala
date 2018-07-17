@@ -14,4 +14,11 @@ object CollectionsBad extends App {
     asyncAdd(10 until 20)
     Thread.sleep(500)
 
+    def betterAsyncAdd(numbers: Seq[Int]) = execute {
+        buffer.synchronized {
+            buffer ++= numbers
+            l.log(s"buffer = $buffer")
+        }
+    }
+
 }
